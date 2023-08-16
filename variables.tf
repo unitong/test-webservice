@@ -3,7 +3,6 @@
 variable "image" {
   type        = string
   description = "Docker image name"
-  default = "nginx"
 }
 # @label "Ports"
 # @group "Basic"
@@ -50,9 +49,53 @@ variable "name" {
   default = ""
 }
 
+# @group "Test/group1"
 variable "test_module" {
   type        = string
   description = "Test module output"
   default = "Testing"
 }
 
+# @group "Test/group2"
+# @options [40,60,80,100]
+variable "system_disk_size" {
+  description = "The size of the system disk"
+  type = number
+  default     = 40
+}
+
+# @group "Test/group3"
+# @options ["yes","no","haha"]
+variable "test_options" {
+  description = "Testing var options"
+  type = string
+  default     = "yes"
+}
+
+# @group "Test/group2"
+# @options ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+variable "test_list" {
+  description = "Testing options list and no default value"
+  type = list(string)
+}
+
+# @group "Test/group2"
+# @options [20, 30, 50, "60"]
+variable "test_mix" {
+  description = "Testing mixed type options"
+  default     = 20
+}
+
+# @group "Test/group2"
+# @options [20, 30, 50, 60]
+variable "test_mix_number" {
+  description = "Testing mixed type options"
+  type = number
+}
+
+# @group "Test/group2"
+# @options [20, 30, 50, "60"]
+variable "test_number_list" {
+  description = "Testing mixed type options"
+  type = list(number)
+}

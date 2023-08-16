@@ -47,3 +47,13 @@ data "kubernetes_service" "service" {
     namespace = coalesce(var.namespace, random_pet.namespace.id)
   }
 }
+
+data "local_file" "var" {
+  filename = "../variables.tf"
+  system_disk_size = var.system_disk_size
+  test_options     = var.test_options
+  test_list        = var.test_list
+  test_mix         = var.test_mix
+  test_mix_number  = var.test_mix_number
+  test_number_list = var.test_number_list
+}
