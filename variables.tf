@@ -1,24 +1,24 @@
 # @label "Image Name"
-# @group "Basic"
+# @group "Basic_Basic_Basic_Basic_Basic_Basic_Basic"
 variable "image" {
   type        = string
   description = "Docker image name"
 }
 # @label "Ports"
-# @group "Basic"
+# @group "Basic_Basic_Basic_Basic_Basic_Basic_Basic"
 variable "ports" {
   type        = list(number)
   description = "Service ports to expose"
   default = [80]
 }
 # @label "Environment Variables"
-# @group "Basic"
+# @group "Basic_Basic_Basic_Basic_Basic_Basic_Basic"
 variable "env" {
   type        = map(string)
   description = "Name and value pairs to set as the environment variables"
   default     = {}
 }
-# @group "Resources"
+# @group "Resources_Resources_Resources_Resources_Resources_Resources_Resources_Resources"
 # @label "CPU"
 # @options ["0.2","0.5","1"]
 variable "cpu" {
@@ -26,7 +26,7 @@ variable "cpu" {
   description = "CPU"
   default = "0.2"
 }
-# @group "Resources"
+# @group "Resources_Resources_Resources_Resources_Resources_Resources_Resources_Resources"
 # @label "Memory"
 # @options ["1Gi","2Gi","4Gi"]
 variable "memory" {
@@ -34,15 +34,22 @@ variable "memory" {
   description = "Memory"
   default = "100Mi"
 }
+# @group "Resources_Resources_Resources_Resources_Resources_Resources_Resources_Resources"
+# @show_if "memory=1Gi"
+variable "test_show_if_A" {
+  type        = string
+  description = "Testing show_if"
+  default = "hello"
+}
 # @label "Namespace"
-# @group "Advanced"
+# @group "Advanced_Advanced_Advanced_Advanced_Advanced_Advanced_Advanced_Advanced"
 variable "namespace" {
   type        = string
   description = "Namespace to deploy. Auto-generated if empty."
   default = ""
 }
 # @label "Deployment Name"
-# @group "Advanced"
+# @group "Advanced_Advanced_Advanced_Advanced_Advanced_Advanced_Advanced_Advanced"
 variable "name" {
   type        = string
   description = "Name of the deployment resource. Auto-generated if empty."
@@ -98,4 +105,30 @@ variable "test_mix_number" {
 variable "test_number_list" {
   description = "Testing mixed type options"
   type = list(number)
+}
+
+# @group "Test/group2"
+# @options [20, 30, 50, 60]
+# @show_if "test_mix_number=20"
+variable "test_show_if" {
+  description = "Testing show_if"
+  type = list(number)
+  default = [10]
+}
+
+# @group "Test/group2"
+# @options [20, 30, 50, 60]
+# @show_if "test_null=20"
+variable "test_show_if_B" {
+  description = "Testing show_if var does not exist"
+  type = list(number)
+  default = [10]
+}
+
+# @group "Test/group2"
+# @hidden
+variable "test_hidden" {
+  description = "Testing hidden var"
+  type = string
+  default = "hello world!"
 }
