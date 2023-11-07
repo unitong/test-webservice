@@ -1,59 +1,66 @@
-resource "random_pet" "namespace" {}
-resource "random_pet" "name" {}
-
-resource "kubernetes_namespace" "ns" {
-  count = var.namespace == "" ? 1 : 0
-  metadata {
-    name = random_pet.namespace.id
+terraform {
+  required_providers {
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = "1.14.0"
+    }
   }
 }
 
 module "deployment" {
-  source  = "terraform-iaac/deployment/kubernetes"
-  version = "1.4.2"
+  # disable wait for all pods be ready.
+  #
+  wait_for_rollout = false
 
-  name      = coalesce(var.name, random_pet.name.id)
-  namespace = coalesce(var.namespace, random_pet.namespace.id)
+  # always pull latest version avoid fake updating.
+  #
+  image_pull_policy = "Always"
+
+  # Use local paths to avoid accessing external networks
+  # This module comes from terraform registry "terraform-iaac/deployment/kubernetes 1.4.2"
+  source  = "./modules/deployment/kubernetes"
+
+  name      = local.name
+  namespace = local.namespace
   image     = var.image
+  replicas  = var.replicas
   resources = {
-    request_cpu = var.cpu
-    limit_cpu = var.cpu
-    request_memory = var.memory
-    limit_memory = var.memory
+    request_cpu    = var.request_cpu == "" ? null : var.request_cpu
+    limit_cpu      = var.limit_cpu == "" ? null : var.limit_cpu
+    request_memory = var.request_memory == "" ? null : var.request_memory
+    limit_memory   = var.limit_memory == "" ? null : var.limit_memory
   }
   env = var.env
 }
 
 module "service" {
-  source  = "terraform-iaac/service/kubernetes"
-  version = "1.0.4"
 
-  app_name      = coalesce(var.name, random_pet.name.id)
-  app_namespace = coalesce(var.namespace, random_pet.namespace.id)
+  # Use local paths to avoid accessing external networks
+  # This module comes from terraform registry "terraform-iaac/service/kubernetes 1.0.4"
+  source  = "./modules/service/kubernetes"
+
+  app_name      = local.name
+  app_namespace = local.namespace
   type          = "NodePort"
-  port_mapping     = [for p in var.ports :
-  {
-    name          = "port-${p}"
-    internal_port = p
-    external_port = p
-    protocol      = "TCP"
+  port_mapping = [for p in var.ports :
+    {
+      name          = "port-${p}"
+      internal_port = p
+      external_port = p
+      protocol      = "TCP"
   }]
 }
 
 data "kubernetes_service" "service" {
   depends_on = [module.service]
+
   metadata {
-    name = coalesce(var.name, random_pet.name.id)
-    namespace = coalesce(var.namespace, random_pet.namespace.id)
+    name      = local.name
+    namespace = local.namespace
   }
 }
 
-data "local_file" "var" {
-  filename = "../variables.tf"
-  system_disk_size = var.system_disk_size
-  test_options     = var.test_options
-  test_list        = var.test_list
-  test_mix         = var.test_mix
-  test_mix_number  = var.test_mix_number
-  test_number_list = var.test_number_list
+locals {
+  name      = coalesce(var.name, "${var.walrus_metadata_service_name}")
+  namespace = coalesce(var.namespace, var.walrus_metadata_namespace_name)
 }
