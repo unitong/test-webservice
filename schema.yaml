@@ -12,6 +12,7 @@ components:
           title: Image Name
           type: string
           description: Docker image name
+          default: "nginx"
           x-walrus-ui:
             group: Basic
         ports:
@@ -43,14 +44,14 @@ components:
           title: CPU Request
           type: string
           description: CPU request. e.g. 0.5, 1, 2
-          default: '0.1'
+          default: '0.001'
           x-walrus-ui:
             group: Resources
         request_memory:
           title: Memory Request
           type: string
           description: Memory request. e.g. 128Mi, 512Mi, 1Gi, 2Gi, 4Gi
-          default: 128Mi
+          default: 10Mi
           x-walrus-ui:
             group: Resources
         limit_cpu:
