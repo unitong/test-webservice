@@ -79,3 +79,10 @@ variable "walrus_metadata_namespace_name" {
   description = "Walrus metadata namespace name."
   default     = ""
 }
+
+variable "test_var" {
+  type        = string
+  description = "Test variable."
+  default     = ""
+}
+
